@@ -1,14 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import dataTransfer from '../entities/bank.entity';
 
 @Injectable()
 export class TransferService {
-  private transfers: any[] = []; // Simulated in-memory database
+  private transfers: dataTransfer[] = []; // Simulated in-memory database
 
-  findAll(): any[] {
+  findAll(): dataTransfer[] {
     return this.transfers;
   }
 
-  findOne(id: number): any {
+  findOne(id: number): dataTransfer {
     const transfer = this.transfers.find((t) => t.id === id);
     if (!transfer) {
       throw new NotFoundException(`Transfer with ID ${id} not found`);
