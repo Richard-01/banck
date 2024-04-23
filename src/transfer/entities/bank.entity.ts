@@ -1,8 +1,8 @@
 
 export default interface dataTransfer {
-    id: number;
+    id?: number;
     sender: string;
     receiver: string;
     amount: number;
-    date: Date;
+    date?: Date;
 }
