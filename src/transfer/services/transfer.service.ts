@@ -17,13 +17,13 @@ export class TransferService {
     return transfer;
   }
 
-  create(transfer: any): any {
+  create(transfer: dataTransfer): dataTransfer {
     const newTransfer = { id: this.generateId(), ...transfer };
     this.transfers.push(newTransfer);
     return newTransfer;
   }
 
-  update(id: number, transfer: any): any {
+  update(id: number, transfer: dataTransfer): dataTransfer {
     const index = this.transfers.findIndex((t) => t.id === id);
     if (index === -1) {
       throw new NotFoundException(`Transfer with ID ${id} not found`);
@@ -32,7 +32,7 @@ export class TransferService {
     return this.transfers[index];
   }
 
-  remove(id: number): any {
+  remove(id: number): dataTransfer {
     const index = this.transfers.findIndex((t) => t.id === id);
     if (index === -1) {
       throw new NotFoundException(`Transfer with ID ${id} not found`);
