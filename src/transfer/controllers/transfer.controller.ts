@@ -8,34 +8,34 @@ import {
   Delete,
 } from '@nestjs/common';
 import { TransferService } from '../services/transfer.service';
-import dataTransfer from '../entities/bank.entity';
+import {TransferDto} from '../DTOs/common/transfer.dto';
 
 @Controller('transfers')
 export class TransferController {
-  constructor(private readonly transferService: TransferService) {}
+    constructor(private readonly transferService: TransferService) {}
 
-  @Get()
-  findAll(): dataTransfer[] {
-    return this.transferService.findAll();
-  }
+    @Get('getAll')
+    async findAll() {
+        return await this.transferService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): dataTransfer {
-    return this.transferService.findOne(+id);
-  }
+    @Get('getOne/:id')
+    async findOne(@Param('id') id: string) {
+        return await this.transferService.findOne(id);
+    }
 
-  @Post()
-  create(@Body() transfer: dataTransfer): dataTransfer {
-    return this.transferService.create(transfer);
-  }
+    @Post('create')
+    async create(@Body() transferDto: TransferDto) {
+        return await this.transferService.create(transferDto);
+    }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() transfer: dataTransfer): dataTransfer {
-    return this.transferService.update(+id, transfer);
-  }
+    @Put('update/:id')
+    async update(@Param('id') id: string, @Body() transferDto: TransferDto) {
+        return await this.transferService.update(id, transferDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string): dataTransfer {
-    return this.transferService.remove(+id);
-  }
+    @Delete('delete/:id')
+    async remove(@Param('id') id: string) {
+        return await this.transferService.remove(id);
+    }
 }

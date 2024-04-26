@@ -1,8 +1,19 @@
+import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Document } from "mongoose";
 
-export default interface dataTransfer {
-    id?: number;
+@Schema({timestamps: true})
+export class Transfer extends Document {
+    @Prop({required: true})
+    userId: string;
+
+    @Prop({required: true})
     sender: string;
-    receiver: string;
+
+    @Prop({required: true})
+    recipient: string;
+
+    @Prop({required: true})
     amount: number;
-    date?: Date;
 }
+
+export const TransferSchema = SchemaFactory.createForClass(Transfer);

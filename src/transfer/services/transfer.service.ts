@@ -1,49 +1,65 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import dataTransfer from '../entities/bank.entity';
-
-@Injectable()
+import {Transfer} from '../entities/bank.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from'mongoose';
+import {TransferDto} from '../DTOs/common/transfer.dto';
+import {TransferOutputDto} from '../DTOs/response/transferOutput.dto';
+import {TransferInputDto} from '../DTOs/request/transferInput.dto';
 export class TransferService {
-  private transfers: dataTransfer[] = []; // Simulated in-memory database
+    constructor(@InjectModel(Transfer.name) protected transferModel: Model<Transfer>) { }
 
-  findAll(): dataTransfer[] {
-    return this.transfers;
-  }
-
-  findOne(id: number): dataTransfer {
-    const transfer = this.transfers.find((t) => t.id === id);
-    if (!transfer) {
-      throw new NotFoundException(`Transfer with ID ${id} not found`);
+    async findAll(): Promise<TransferOutputDto[]> {
+        try {
+            const transfers = await this.transferModel.find().exec();
+            return transfers.map(transfer => transfer.toObject());
+        } catch (error) {
+            throw new Error(`Error occurred while fetching transfers: ${error.message}`);
+        }
     }
-    return transfer;
-  }
 
-  create(transfer: dataTransfer): dataTransfer {
-    const newTransfer = { id: this.generateId(), ...transfer };
-    this.transfers.push(newTransfer);
-    return newTransfer;
-  }
-
-  update(id: number, transfer: dataTransfer): dataTransfer {
-    const index = this.transfers.findIndex((t) => t.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`Transfer with ID ${id} not found`);
+    async findOne(userId: string): Promise<TransferOutputDto> {
+        try {
+            const transfer = await this.transferModel.findOne({ userId }).exec();
+            if (!transfer) {
+                throw new NotFoundException(`Transfer with userId ${userId} not found`);
+            }
+            return transfer.toObject();
+        } catch (error) {
+            throw new Error(`Error occurred while fetching transfer: ${error.message}`);
+        }
     }
-    this.transfers[index] = { ...this.transfers[index], ...transfer };
-    return this.transfers[index];
-  }
 
-  remove(id: number): dataTransfer {
-    const index = this.transfers.findIndex((t) => t.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`Transfer with ID ${id} not found`);
+    async create(createTransferDto: TransferDto): Promise<Transfer> {
+        try {
+            const createdTransfer = new this.transferModel(createTransferDto);
+            const savedTransfer = await createdTransfer.save();
+            return savedTransfer.save();
+        } catch (error) {
+            throw new Error(`Error occurred while creating transfer: ${error.message}`);
+        }
     }
-    const deletedTransfer = this.transfers.splice(index, 1);
-    return deletedTransfer[0];
-  }
 
-  private generateId(): number {
-    return this.transfers.length > 0
-      ? Math.max(...this.transfers.map((t) => t.id)) + 1
-      : 1;
-  }
+    async update(userId: string, updateTransferDto: TransferInputDto): Promise<TransferOutputDto> {
+        try {
+            const updatedTransfer = await this.transferModel.findOneAndUpdate({ userId }, updateTransferDto, { new: true }).exec();
+            if (!updatedTransfer) {
+                throw new NotFoundException(`Transfer with userId ${userId} not found`);
+            }
+            return updatedTransfer.toObject();
+        } catch (error) {
+            throw new Error(`Error occurred while updating transfer: ${error.message}`);
+        }
+    }
+
+    async remove(userId: string): Promise<TransferOutputDto> {
+        try {
+            const deletedTransfer = await this.transferModel.findOneAndDelete({ userId }).exec();
+            if (!deletedTransfer) {
+                throw new NotFoundException(`Transfer with userId ${userId} not found`);
+            }
+            return deletedTransfer.toObject();
+        } catch (error) {
+            throw new Error(`Error occurred while deleting transfer: ${error.message}`);
+        }
+    }
 }
