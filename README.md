@@ -1,4 +1,4 @@
-# Exercises - typeScript
+# Exercises - Nestjs
 
 Estos ejercicio fue proporcionado por la team leader.
 ## Tabla de Contenidos
