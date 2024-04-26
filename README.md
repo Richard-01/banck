@@ -1,6 +1,11 @@
 # Exercises - Nestjs
 
 Estos ejercicio fue proporcionado por la team leader.
+**EQUIPO:**
+
+- Alexander Rodriguez
+- Richard Montoya
+
 ## Tabla de Contenidos
 
 - [Instalación](#instalación)
